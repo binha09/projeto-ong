@@ -1,5 +1,6 @@
 -- ONG Esperança Viva · database/schema.sql
 -- Projeto Integrador Extensionista II · Atividade 2
+-- Aluna: Debora Araujo do Rio
 
 SET NAMES utf8mb4;
 DROP DATABASE IF EXISTS ong_esperanca_viva;
