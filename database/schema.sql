@@ -31,7 +31,7 @@ CREATE TABLE item (
   id_item        INT AUTO_INCREMENT PRIMARY KEY,
   id_categoria   INT NOT NULL,
   nome           VARCHAR(120) NOT NULL,
-  unidade_medida VARCHAR(20) NOT NULL DEFAULT 'un',
+  unidade        VARCHAR(20) NOT NULL DEFAULT 'unidade',
   estoque_minimo INT NOT NULL DEFAULT 0 CHECK (estoque_minimo >= 0),
   UNIQUE (id_categoria, nome),
   FOREIGN KEY (id_categoria) REFERENCES categoria (id_categoria)
@@ -43,7 +43,7 @@ CREATE TABLE doacao (
   id_doador       INT NOT NULL,
   data_doacao     DATE NOT NULL,
   valor_monetario DECIMAL(10,2) NOT NULL DEFAULT 0.00 CHECK (valor_monetario >= 0),
-  observacoes     VARCHAR(255),
+  observacao      VARCHAR(255),
   criado_em       TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (id_doador) REFERENCES doador (id_doador)
 );
