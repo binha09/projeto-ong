@@ -4,10 +4,31 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <title>ONG Esperança Viva · Status da API</title>
+    <title>ONG Esperança Viva · Gestão de Doações</title>
   </head>
   <body>
-    <main id="app"></main>
+    <header class="topo">
+      <div class="topo-conteudo">
+        <div class="marca">
+          <span class="marca-tag">PIE II · Sistema da ONG</span>
+          <h1>ONG Esperança Viva</h1>
+        </div>
+        <div class="topo-direita">
+          <p class="status-api" id="status-api" role="status">Status da API: verificando...</p>
+          <nav aria-label="Navegação principal" class="menu">
+            <a href="#/doadores" data-rota="#/doadores">Doadores</a>
+            <a href="#/doacoes" data-rota="#/doacoes">Doações</a>
+          </nav>
+        </div>
+      </div>
+    </header>
+
+    <main id="app" class="container"></main>
+
+    <footer class="rodape">
+      <p>ONG Esperança Viva · Projeto Integrador Extensionista II · Aluna: Debora Araujo do Rio</p>
+    </footer>
+
     <script type="module" src="/src/main.js"></script>
   </body>
 </html>

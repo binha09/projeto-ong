@@ -1,76 +1,52 @@
 import "./style.css";
+import { obterSaude } from "./api.js";
+import { renderDoacoes } from "./pages/doacoes.js";
+import { renderDoadores } from "./pages/doadores.js";
 
 const app = document.querySelector("#app");
+const statusApiEl = document.querySelector("#status-api");
+const linksMenu = [...document.querySelectorAll("nav.menu a")];
 
-app.innerHTML = `
-  <section class="card">
-    <header class="header">
-      <span class="badge">Projeto Integrador Extensionista II</span>
-      <h1>ONG Esperança Viva</h1>
-      <p class="subtitle">
-        Plataforma web conectada à API Express com Vite+
-      </p>
-    </header>
+const rotas = {
+  "#/doadores": renderDoadores,
+  "#/doacoes": renderDoacoes,
+};
 
-    <div class="status-panel" id="status-panel">
-      <div class="status-row">
-        <span class="indicator loading" id="status-indicator"></span>
-        <strong class="status-text" id="status-text">Consultando API...</strong>
-      </div>
-      <p class="timestamp" id="status-time">Aguardando resposta de <code>GET /api/health</code></p>
-      <p class="app-meta" id="status-meta"></p>
-    </div>
-
-    <div class="actions">
-      <button id="refresh-btn" type="button">Verificar novamente</button>
-      <span class="endpoint-tag">Proxy: <code>/api/health</code></span>
-    </div>
-  </section>
-`;
-
-const statusPanel = document.querySelector("#status-panel");
-const statusIndicator = document.querySelector("#status-indicator");
-const statusText = document.querySelector("#status-text");
-const statusTime = document.querySelector("#status-time");
-const statusMeta = document.querySelector("#status-meta");
-const refreshBtn = document.querySelector("#refresh-btn");
-
-async function loadApiHealth() {
-  statusIndicator.className = "indicator loading";
-  statusText.textContent = "Consultando API...";
-  refreshBtn.disabled = true;
-
-  try {
-    const response = await fetch("/api/health");
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}`);
+function atualizarMenu(rotaAtual) {
+  for (const link of linksMenu) {
+    if (link.dataset.rota === rotaAtual) {
+      link.setAttribute("aria-current", "page");
+    } else {
+      link.removeAttribute("aria-current");
     }
-
-    const data = await response.json();
-    const formattedDate = new Date(data.timestamp).toLocaleString("pt-BR", {
-      dateStyle: "short",
-      timeStyle: "medium",
-    });
-
-    statusPanel.classList.remove("error");
-    statusPanel.classList.add("ok");
-    statusIndicator.className = "indicator ok";
-    statusText.textContent = `Status da API: ${data.status}`;
-    statusTime.textContent = `Data e hora: ${formattedDate}`;
-    statusMeta.textContent = data.app ? `Aplicação: ${data.app}` : "";
-  } catch (error) {
-    statusPanel.classList.remove("ok");
-    statusPanel.classList.add("error");
-    statusIndicator.className = "indicator error";
-    statusText.textContent = "Status da API: indisponível";
-    statusTime.textContent = `Erro ao consultar /api/health (${error.message})`;
-    statusMeta.textContent = "Verifique se o servidor da API está rodando com npm run api.";
-  } finally {
-    refreshBtn.disabled = false;
   }
 }
 
-refreshBtn.addEventListener("click", () => {
-  void loadApiHealth();
+async function navegar() {
+  const hash = window.location.hash;
+  const rota = rotas[hash] ? hash : "#/doadores";
+  atualizarMenu(rota);
+  await rotas[rota](app);
+}
+
+async function atualizarSaude() {
+  try {
+    const dados = await obterSaude();
+    const hora = new Date(dados.timestamp).toLocaleString("pt-BR", {
+      dateStyle: "short",
+      timeStyle: "short",
+    });
+    statusApiEl.className = dados.banco === "ok" ? "status-api ok" : "status-api erro";
+    statusApiEl.textContent = `Status da API: ${dados.status} · Banco: ${dados.banco} · ${hora}`;
+  } catch {
+    statusApiEl.className = "status-api erro";
+    statusApiEl.textContent = "Status da API: indisponível";
+  }
+}
+
+window.addEventListener("hashchange", () => {
+  void navegar();
 });
-void loadApiHealth();
+
+void atualizarSaude();
+void navegar();
