@@ -1,0 +1,99 @@
+### ONG Esperança Viva · Testes manuais da API
+### Com a API rodando (npm run api / vp run api), clique em "Send Request" acima de cada bloco.
+
+@api = http://localhost:3000/api
+
+### 1. Saúde da API e do banco
+GET {{api}}/health
+
+### 2. Listar doadores
+GET {{api}}/doadores
+
+### 3. Buscar um doador existente
+GET {{api}}/doadores/1
+
+### 4. Doador que não existe (espera 404)
+GET {{api}}/doadores/999
+
+### 5. Cadastrar doador (espera 201)
+POST {{api}}/doadores
+Content-Type: application/json
+
+{
+  "nome": "Beatriz Ramos",
+  "email": "beatriz@exemplo.com",
+  "telefone": "(11) 96666-1003"
+}
+
+### 6. Cadastrar sem nome (espera 400)
+POST {{api}}/doadores
+Content-Type: application/json
+
+{
+  "email": "sem.nome@exemplo.com"
+}
+
+### 7. Cadastrar com e-mail repetido (espera 409)
+POST {{api}}/doadores
+Content-Type: application/json
+
+{
+  "nome": "Outra Ana",
+  "email": "ana.souza@exemplo.com"
+}
+
+### 8. Editar doador existente (espera 200)
+PUT {{api}}/doadores/3
+Content-Type: application/json
+
+{
+  "nome": "Carlos Lima Atualizado",
+  "email": "carlos.lima@exemplo.com",
+  "telefone": "(11) 97777-1002"
+}
+
+### 9. Editar doador inexistente (espera 404)
+PUT {{api}}/doadores/999
+Content-Type: application/json
+
+{
+  "nome": "Inexistente"
+}
+
+### 10. Excluir doador com doações (espera 409)
+DELETE {{api}}/doadores/1
+
+### 11. Excluir doador sem doações (espera 204 - ajuste o ID se necessário)
+DELETE {{api}}/doadores/5
+
+### 12. Listar catálogo de itens
+GET {{api}}/itens
+
+### 13. Listar doações com doador e itens
+GET {{api}}/doacoes
+
+### 14. Registrar doação válida (espera 201)
+POST {{api}}/doacoes
+Content-Type: application/json
+
+{
+  "id_doador": 2,
+  "data_doacao": "2026-10-22",
+  "observacao": "Arrecadação da escola",
+  "itens": [
+    { "id_item": 1, "quantidade": 4 },
+    { "id_item": 4, "quantidade": 6 }
+  ]
+}
+
+### 15. Registrar doação com item inexistente (espera 400 e rollback)
+POST {{api}}/doacoes
+Content-Type: application/json
+
+{
+  "id_doador": 2,
+  "data_doacao": "2026-10-22",
+  "itens": [
+    { "id_item": 9999, "quantidade": 2 }
+  ]
+}
